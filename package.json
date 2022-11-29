@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "serverless-mysql": "^1.5.4",
+    "snowflake-sdk": "^1.6.16"
+  }
+}
