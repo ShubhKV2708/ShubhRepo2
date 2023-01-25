@@ -1,0 +1,51 @@
+import axios from 'axios';
+import { NextApiRequest, NextApiResponse } from 'next';
+
+
+jest.mock('axios');
+jest.mock('../utils/');
+
+describe('getAccountGrpDetails', () => {
+  const req = { method: 'POST', query: { accountId: 123 } } as NextApiRequest;
+  const res = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn().mockReturnThis(),
+    send: jest.fn().mockReturnThis(),
+  } as NextApiResponse;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (getAccessToken as jest.Mock).mockResolvedValue('access_token');
+  });
+
+  it('should return account group details', async () => {
+    const response = { data: { groupId: 123, groupName: 'Test Group' } };
+    (axios.get as jest.Mock).mockResolvedValue(response);
+
+    await getAccountGrpDetails(req, res);
+
+    expect(getAccessToken).toHaveBeenCalledWith('POST');
+    expect(axios.get).toHaveBeenCalledWith(
+      '',
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer access_token',
+        },
+        params: { accountId: 123 },
+      }
+    );
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.send).toHaveBeenCalledWith(response.data);
+  });
+
+  it('should handle error', async () => {
+    const error = new Error('Request failed');
+    (axios.get as jest.Mock).mockRejectedValue(error);
+
+    await getAccountGrpDetails(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith(error);
+  });
+});
