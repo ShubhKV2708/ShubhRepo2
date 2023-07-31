@@ -10,6 +10,5 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  scp -i Downloads\aws-practice1.pem C:\Personal Work\docker app\new next js\app.zip 3.84.30.146:/
-  res.status(200).json({ name: 'John Doe' })
+  res.status(200).json({ name: 'John Doe' });
 }
